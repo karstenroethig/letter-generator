@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="ISO-8859-1"  ?>
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+
+<jasperReport
+	name="letter"
+	columnCount="1"
+	printOrder="Vertical"
+	orientation="Portrait"
+	pageWidth="595"
+	pageHeight="842"
+	columnWidth="515"
+	columnSpacing="0"
+	leftMargin="10"
+	rightMargin="10"
+	topMargin="10"
+	bottomMargin="10"
+	whenNoDataType="NoPages"
+	isTitleNewPage="false"
+	isSummaryNewPage="false">
+
+	<parameter name="senderName" isForPrompting="true" class="java.lang.String"/>
+	<parameter name="senderStreet" isForPrompting="true" class="java.lang.String"/>
+	<parameter name="senderPostcode" isForPrompting="true" class="java.lang.String"/>
+	<parameter name="senderCity" isForPrompting="true" class="java.lang.String"/>
+	
+	<parameter name="addressee" isForPrompting="true" class="java.lang.String"/>
+	
+	<parameter name="formattedDate" isForPrompting="true" class="java.lang.String"/>
+	
+	<parameter name="summary" isForPrompting="true" class="java.lang.String"/>
+	<parameter name="text" isForPrompting="true" class="java.lang.String"/>
+
+	<background>
+		<band height="0"></band>
+	</background>
+	<title>
+		<band height="0"></band>
+	</title>
+	<pageHeader>
+		<band height="0"></band>
+	</pageHeader>
+	<columnHeader>
+		<band height="0"></band>
+	</columnHeader>
+
+	<detail>
+		<band height="800">
+
+			<!-- {{SENDER}} -->
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None" hyperlinkTarget="Self">
+				<reportElement mode="Opaque" x="60" y="118" width="222" height="12" key="textField-sender"/>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String">
+					<![CDATA[$P{senderName}+" · "+$P{senderStreet}+" · "+$P{senderPostcode}+" "+$P{senderCity}]]>
+				</textFieldExpression>
+			</textField>
+			<!-- {{/SENDER}} -->
+
+			<!-- {{ADDRESSEE}} -->
+			<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None" hyperlinkTarget="Self">
+				<reportElement mode="Opaque" x="60" y="150" width="222" height="71" key="textField-addressee"/>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Arial" pdfFontName="Helvetica" size="10" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+				</textElement>
+				<textFieldExpression class="java.lang.String">
+					<![CDATA[$P{addressee}]]>
+				</textFieldExpression>
+			</textField>
+			<!-- {{/ADDRESSEE}} -->
+
+			<!-- {{FOLDING MARKS}} -->
+			<line>
+				<reportElement x="0" y="273" width="10" height="0" key="line-foldingMark1"/>
+				<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="0" y="415" width="10" height="0" key="line-foldingMark2"/>
+				<graphicElement stretchType="NoStretch">
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+				</graphicElement>
+			</line>
+			<!-- {{/FOLDING MARKS}} -->
+
+			<!-- {{DATE}} -->
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None" hyperlinkTarget="Self">
+				<reportElement mode="Opaque" x="340" y="211" width="185" height="15" key="textField-date"/>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+					<font fontName="Arial" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+				</textElement>
+				<textFieldExpression class="java.lang.String">
+					<![CDATA["Datum: "+$P{formattedDate}]]>
+				</textFieldExpression>
+			</textField>
+			<!-- {{DATE}} -->
+
+			<!-- {{SUMMARY}} -->
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None" hyperlinkTarget="Self">
+				<reportElement mode="Opaque" x="60" y="245" width="465" height="15" key="textField-summary"/>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Arial" pdfFontName="Helvetica-Bold" size="12" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+				</textElement>
+				<textFieldExpression class="java.lang.String">
+					<![CDATA[$P{summary}]]>
+				</textFieldExpression>
+			</textField>
+			<!-- {{/SUMMARY}} -->
+
+			<!-- {{TEXT}} -->
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<reportElement mode="Transparent" x="60" y="275" width="465" height="525" key="textField-text"/>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Arial" pdfFontName="Helvetica" size="10" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+				</textElement>
+				<textFieldExpression class="java.lang.String">
+					<![CDATA[$P{text}]]>
+				</textFieldExpression>
+			</textField>
+			<!-- {{TEXT}} -->
+
+		</band>
+	</detail>
+
+	<columnFooter>
+		<band height="0"></band>
+	</columnFooter>
+	<pageFooter>
+		<band height="0"></band>
+	</pageFooter>
+	<summary>
+		<band height="0"></band>
+	</summary>
+</jasperReport>
