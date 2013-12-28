@@ -5,11 +5,15 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -52,11 +56,10 @@ public class InputComponent extends JComponent {
         panel.setBorder( new CompoundBorder( new TitledBorder( null, "Absender", TitledBorder.LEFT, TitledBorder.TOP ),
                 null ) );
 
-        addComp( panel, new JLabel( "Name" ), 0, 0, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE );
-        addComp( panel, new JLabel( "Straße" ), 0, 1, 1, 1, 0, 0, GridBagConstraints.NORTHWEST,
-            GridBagConstraints.NONE );
-        addComp( panel, new JLabel( "PLZ" ), 0, 2, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE );
-        addComp( panel, new JLabel( "Ort" ), 0, 3, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE );
+        addComp( panel, new JLabel( "Name" ), 0, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE );
+        addComp( panel, new JLabel( "Straße" ), 0, 1, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE );
+        addComp( panel, new JLabel( "PLZ" ), 0, 2, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE );
+        addComp( panel, new JLabel( "Ort" ), 0, 3, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE );
         addComp( panel, createTextField( "senderName" ), 1, 0, 1, 1, 1, 0, GridBagConstraints.NORTHWEST,
             GridBagConstraints.HORIZONTAL );
         addComp( panel, createTextField( "senderStreet" ), 1, 1, 1, 1, 1, 0, GridBagConstraints.NORTHWEST,
@@ -67,7 +70,6 @@ public class InputComponent extends JComponent {
             GridBagConstraints.HORIZONTAL );
 
         return panel;
-
     }
 
     private JPanel createAddresseePanel() {
@@ -98,10 +100,8 @@ public class InputComponent extends JComponent {
         panel.setBorder( new CompoundBorder( new TitledBorder( null, "Schreiben", TitledBorder.LEFT, TitledBorder.TOP ),
                 null ) );
 
-        addComp( panel, new JLabel( "Datum" ), 0, 0, 1, 1, 0, 0, GridBagConstraints.NORTHWEST,
-            GridBagConstraints.NONE );
-        addComp( panel, new JLabel( "Betreff" ), 0, 1, 1, 1, 0, 0, GridBagConstraints.NORTHWEST,
-            GridBagConstraints.NONE );
+        addComp( panel, new JLabel( "Datum" ), 0, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE );
+        addComp( panel, new JLabel( "Betreff" ), 0, 1, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE );
         addComp( panel, new JLabel( "Text" ), 0, 2, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE );
         addComp( panel, createTextField( "formattedDate" ), 1, 0, 1, 1, 1, 0, GridBagConstraints.NORTHWEST,
             GridBagConstraints.HORIZONTAL );
@@ -116,6 +116,27 @@ public class InputComponent extends JComponent {
 
     private JPanel createOptionsPanel() {
 
+        final JButton button = new JButton( "Wählen" );
+
+        button.addActionListener( new ActionListener() {
+
+                @Override
+                public void actionPerformed( ActionEvent event ) {
+
+                    String outputDirectory = readOutputDirectory();
+
+                    JFileChooser fileChooser = new JFileChooser(
+                            StringUtils.isBlank( outputDirectory ) ? "." : outputDirectory );
+                    fileChooser.setFileSelectionMode( JFileChooser.DIRECTORIES_ONLY );
+
+                    int returnVal = fileChooser.showSaveDialog( button );
+
+                    if( returnVal == JFileChooser.APPROVE_OPTION ) {
+                        setOutputDirectory( fileChooser.getSelectedFile() );
+                    }
+                }
+            } );
+
         JPanel panel = new JPanel();
 
         panel.setLayout( new GridBagLayout() );
@@ -123,15 +144,11 @@ public class InputComponent extends JComponent {
         panel.setBorder( new CompoundBorder( new TitledBorder( null, "Optionen", TitledBorder.LEFT, TitledBorder.TOP ),
                 null ) );
 
-        addComp( panel, new JLabel( "Ausgabeverzeichnis" ), 0, 0, 1, 1, 0, 0, GridBagConstraints.NORTHWEST,
-            GridBagConstraints.NONE );
-        addComp( panel, createTextField( "outputDirectory" ), 1, 0, 1, 1, 1, 0, GridBagConstraints.NORTHWEST,
-            GridBagConstraints.HORIZONTAL );
-        addComp( panel, new JButton( "Wählen" ), 2, 0, 1, 1, 0, 0, GridBagConstraints.NORTHWEST,
-            GridBagConstraints.NONE );
+        addComp( panel, new JLabel( "Ausgabeverzeichnis" ), 0, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE );
+        addComp( panel, createTextField( "outputDirectory" ), 1, 0, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL );
+        addComp( panel, button, 2, 0, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE );
 
         return panel;
-
     }
 
     private JTextField createTextField( String fieldId ) {
@@ -216,6 +233,14 @@ public class InputComponent extends JComponent {
             setFieldText( "summary", letter.getSummary() );
             setFieldText( "text", letter.getText() );
         }
+    }
+
+    public void setOutputDirectory( String outputDirectory ) {
+        setFieldText( "outputDirectory", outputDirectory );
+    }
+
+    public void setOutputDirectory( File outputDirectory ) {
+        setFieldText( "outputDirectory", outputDirectory.getAbsolutePath() );
     }
 
     private void setFieldText( String fieldId, String text ) {

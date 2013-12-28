@@ -1,17 +1,34 @@
 package karstenroethig.lettergenerator.domain;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlAccessorType( XmlAccessType.FIELD )
+@XmlRootElement( name = "letter" )
 public class Letter {
 
-	private String senderName;
-	private String senderStreet;
-	private String senderPostcode;
-	private String senderCity;
+	@XmlAttribute( name = "senderName" )
+    private String senderName;
+	
+	@XmlAttribute( name = "senderStreet" )
+    private String senderStreet;
+	
+	@XmlAttribute( name = "senderPostcode" )
+    private String senderPostcode;
+	
+	@XmlAttribute( name = "senderCity" )
+    private String senderCity;
 	
 	private String addressee;
 	
-	private String formattedDate;
+	@XmlAttribute( name = "formattedDate" )
+    private String formattedDate;
 	
-	private String summary;
+	@XmlAttribute( name = "summary" )
+    private String summary;
+	
 	private String text;
 	
 	public Letter() {
