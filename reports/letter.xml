@@ -49,9 +49,9 @@
 			<!-- {{SENDER}} -->
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None" hyperlinkTarget="Self">
 				<reportElement mode="Opaque" x="60" y="118" width="222" height="12" key="textField-sender"/>
-				<box>
+				<!--box>
 					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-				</box>
+				</box-->
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
 					<font fontName="Arial" size="6"/>
 				</textElement>
@@ -64,9 +64,9 @@
 			<!-- {{ADDRESSEE}} -->
 			<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None" hyperlinkTarget="Self">
 				<reportElement mode="Opaque" x="60" y="150" width="222" height="71" key="textField-addressee"/>
-				<box>
+				<!--box>
 					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-				</box>
+				</box-->
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
 					<font fontName="Arial" pdfFontName="Helvetica" size="10" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 				</textElement>
@@ -94,9 +94,9 @@
 			<!-- {{DATE}} -->
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None" hyperlinkTarget="Self">
 				<reportElement mode="Opaque" x="340" y="211" width="185" height="15" key="textField-date"/>
-				<box>
+				<!--box>
 					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-				</box>
+				</box-->
 				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
 					<font fontName="Arial" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 				</textElement>
@@ -109,9 +109,9 @@
 			<!-- {{SUMMARY}} -->
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None" hyperlinkTarget="Self">
 				<reportElement mode="Opaque" x="60" y="245" width="465" height="15" key="textField-summary"/>
-				<box>
+				<!--box>
 					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-				</box>
+				</box-->
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
 					<font fontName="Arial" pdfFontName="Helvetica-Bold" size="12" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 				</textElement>
@@ -124,9 +124,9 @@
 			<!-- {{TEXT}} -->
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 				<reportElement mode="Transparent" x="60" y="275" width="465" height="525" key="textField-text"/>
-				<box>
+				<!--box>
 					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-				</box>
+				</box-->
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
 					<font fontName="Arial" pdfFontName="Helvetica" size="10" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 				</textElement>
