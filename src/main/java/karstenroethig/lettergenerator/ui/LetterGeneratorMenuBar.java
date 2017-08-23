@@ -16,119 +16,123 @@ import karstenroethig.lettergenerator.model.LetterGeneratorModel;
 
 import org.apache.commons.lang3.StringUtils;
 
-public class LetterGeneratorMenuBar extends JMenuBar {
-
+public class LetterGeneratorMenuBar extends JMenuBar
+{
 	/** Use serialVersionUID for interoperability. */
 	private static final long serialVersionUID = -4488135531804338591L;
 
-    private InputComponent inputComponent;
+	private InputComponent inputComponent;
 
-	public LetterGeneratorMenuBar( InputComponent inputComponent ) {
+	public LetterGeneratorMenuBar( InputComponent inputComponent )
+	{
+		this.inputComponent = inputComponent;
 
-        this.inputComponent = inputComponent;
+		// Menü "Datei"
+		JMenu menu = new JMenu( "Datei" );
+		add( menu );
 
-        // Menü "Datei"
-        JMenu menu = new JMenu( "Datei" );
-        add( menu );
+		// Menüpunkt "Datei" -> "Öffnen"
+		JMenuItem menuItemOpen = new JMenuItem( "Öffnen", new ImageIcon( getClass().getResource( "open.gif" ) ) );
 
-        // Menüpunkt "Datei" -> "Öffnen"
-        JMenuItem menuItemOpen = new JMenuItem( "Öffnen", new ImageIcon( getClass().getResource( "open.gif" ) ) );
+		menuItemOpen.addActionListener( new OpenActionListener() );
 
-        menuItemOpen.addActionListener( new OpenActionListener() );
+		menu.add( menuItemOpen );
 
-        menu.add( menuItemOpen );
+		// Menüpunkt "Datei" -> "Speichern"
+		JMenuItem menuItemSave = new JMenuItem( "Speichern", new ImageIcon( getClass().getResource( "save.gif" ) ) );
 
-        // Menüpunkt "Datei" -> "Speichern"
-        JMenuItem menuItemSave = new JMenuItem( "Speichern", new ImageIcon( getClass().getResource( "save.gif" ) ) );
+		menuItemSave.addActionListener( new SaveActionListener() );
 
-        menuItemSave.addActionListener( new SaveActionListener() );
+		menu.add( menuItemSave );
 
-        menu.add( menuItemSave );
+		// Menüpunkt "Datei" -> "Beenden"
+		JMenuItem menuItemExit = new JMenuItem( "Beenden" );
 
-        // Menüpunkt "Datei" -> "Beenden"
-        JMenuItem menuItemExit = new JMenuItem( "Beenden" );
+		menuItemExit.addActionListener( new ActionListener()
+		{
+			@Override
+			public void actionPerformed( ActionEvent e ) {
+				System.exit( 0 );
+			}
+		} );
 
-        menuItemExit.addActionListener( new ActionListener() {
+		menu.add( menuItemExit );
 
-                @Override
-                public void actionPerformed( ActionEvent e ) {
-                    System.exit( 0 );
-                }
-            } );
+		// Menü "Bearbeiten"
+		JMenu menuEdit = new JMenu( "Bearbeiten" );
+		add( menuEdit );
 
-        menu.add( menuItemExit );
+		// Menüpunkt "Bearbeiten" -> "Eingaben zurücksetzen"
+		JMenuItem menuItemReset = new JMenuItem( "Eingaben zurücksetzen" );
 
-        // Menü "Bearbeiten"
-        JMenu menuEdit = new JMenu( "Bearbeiten" );
-        add( menuEdit );
+		menuItemReset.addActionListener( new ResetActionListener() );
 
-        // Menüpunkt "Bearbeiten" -> "Eingaben zurücksetzen"
-        JMenuItem menuItemReset = new JMenuItem( "Eingaben zurücksetzen" );
+		menuEdit.add( menuItemReset );
+	}
 
-        menuItemReset.addActionListener( new ResetActionListener() );
+	protected class OpenActionListener implements ActionListener
+	{
+		@Override
+		public void actionPerformed( ActionEvent event )
+		{
+			String outputDirectory = inputComponent.readOutputDirectory();
 
-        menuEdit.add( menuItemReset );
-    }
+			JFileChooser fileChooser = new JFileChooser( StringUtils.isBlank( outputDirectory ) ? "." : outputDirectory );
+			fileChooser.setFileSelectionMode( JFileChooser.FILES_ONLY );
 
-    protected class OpenActionListener implements ActionListener {
+			int returnVal = fileChooser.showOpenDialog( null );
 
-        @Override
-        public void actionPerformed( ActionEvent event ) {
+			if ( returnVal == JFileChooser.APPROVE_OPTION )
+			{
+				try
+				{
+					Letter letter = LetterGeneratorModel.importLetterFromXmlFile( fileChooser.getSelectedFile() );
 
-            String outputDirectory = inputComponent.readOutputDirectory();
+					inputComponent.setLetter( letter );
+				}
+				catch ( JAXBException ex )
+				{
+					JOptionPane.showMessageDialog( null, "Beim Laden der XML-Datei ist ein Fehler aufgetreten." );
+					ex.printStackTrace();
+				}
+			}
+		}
+	}
 
-            JFileChooser fileChooser = new JFileChooser( StringUtils.isBlank( outputDirectory ) ? "."
-                                                                                                : outputDirectory );
-            fileChooser.setFileSelectionMode( JFileChooser.FILES_ONLY );
+	protected class SaveActionListener implements ActionListener
+	{
+		@Override
+		public void actionPerformed( ActionEvent event )
+		{
+			String outputDirectory = inputComponent.readOutputDirectory();
 
-            int returnVal = fileChooser.showOpenDialog( null );
+			JFileChooser fileChooser = new JFileChooser( StringUtils.isBlank( outputDirectory ) ? "." : outputDirectory );
+			fileChooser.setFileSelectionMode( JFileChooser.FILES_AND_DIRECTORIES );
 
-            if( returnVal == JFileChooser.APPROVE_OPTION ) {
+			int returnVal = fileChooser.showSaveDialog( null );
 
-                try {
-                    Letter letter = LetterGeneratorModel.importLetterFromXmlFile( fileChooser.getSelectedFile() );
+			if ( returnVal == JFileChooser.APPROVE_OPTION )
+			{
+				try
+				{
+					LetterGeneratorModel.exportLetterToXmlFile( inputComponent.readLetter(), fileChooser.getSelectedFile() );
+				}
+				catch ( JAXBException ex )
+				{
+					JOptionPane.showMessageDialog( null, "Beim Speichern der XML-Datei ist ein Fehler aufgetreten." );
+					ex.printStackTrace();
+				}
+			}
+		}
+	}
 
-                    inputComponent.setLetter( letter );
-                } catch( JAXBException ex ) {
-                    JOptionPane.showMessageDialog( null, "Beim Laden der XML-Datei ist ein Fehler aufgetreten." );
-                    ex.printStackTrace();
-                }
-            }
-        }
-    }
-
-    protected class SaveActionListener implements ActionListener {
-
-        @Override
-        public void actionPerformed( ActionEvent event ) {
-
-            String outputDirectory = inputComponent.readOutputDirectory();
-
-            JFileChooser fileChooser = new JFileChooser( StringUtils.isBlank( outputDirectory ) ? "."
-                                                                                                : outputDirectory );
-            fileChooser.setFileSelectionMode( JFileChooser.FILES_AND_DIRECTORIES );
-
-            int returnVal = fileChooser.showSaveDialog( null );
-
-            if( returnVal == JFileChooser.APPROVE_OPTION ) {
-
-                try {
-                    LetterGeneratorModel.exportLetterToXmlFile( inputComponent.readLetter(),
-                        fileChooser.getSelectedFile() );
-                } catch( JAXBException ex ) {
-                    JOptionPane.showMessageDialog( null, "Beim Speichern der XML-Datei ist ein Fehler aufgetreten." );
-                    ex.printStackTrace();
-                }
-            }
-        }
-    }
-
-    protected class ResetActionListener implements ActionListener {
-
-        @Override
-        public void actionPerformed( ActionEvent event ) {
-            inputComponent.setLetter( null );
-            inputComponent.setOutputDirectory( StringUtils.EMPTY );
-        }
-    }
+	protected class ResetActionListener implements ActionListener
+	{
+		@Override
+		public void actionPerformed( ActionEvent event )
+		{
+			inputComponent.setLetter( null );
+			inputComponent.setOutputDirectory( StringUtils.EMPTY );
+		}
+	}
 }

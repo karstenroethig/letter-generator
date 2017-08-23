@@ -16,117 +16,123 @@ import net.sf.jasperreports.engine.JRException;
 import karstenroethig.lettergenerator.domain.Letter;
 import karstenroethig.lettergenerator.model.LetterGeneratorModel;
 
-public class LetterGeneratorFrame extends JFrame {
+public class LetterGeneratorFrame extends JFrame
+{
+	/** Use serialVersionUID for interoperability. */
+	private static final long serialVersionUID = 875495102719093700L;
 
-    /** Use serialVersionUID for interoperability. */
-    private static final long serialVersionUID = 875495102719093700L;
+	private InputComponent inputComponent;
+	private JLabel statusLabel = null;
 
-    private InputComponent inputComponent;
+	public LetterGeneratorFrame()
+	{
+		inputComponent = new InputComponent();
 
-    private JLabel statusLabel = null;
+		setTitle( "Letter Generator" );
+		setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
 
-    public LetterGeneratorFrame() {
+		// busy glasspane is initially invisible
+		setGlassPane( new BusyGlass() );
 
-        inputComponent = new InputComponent();
+		// add a menubar
+		setJMenuBar( new LetterGeneratorMenuBar( inputComponent ) );
 
-        setTitle( "Letter Generator" );
-        setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
+		// add a horizontal toolbar
+		JToolBar toolbar = new JToolBar();
+		add( toolbar, BorderLayout.NORTH );
 
-        // busy glasspane is initially invisible
-        setGlassPane( new BusyGlass() );
+		JButton button = new JButton();
+		button.setIcon( new ImageIcon( getClass().getResource( "run.gif" ) ) );
+		button.setToolTipText( "Generierung starten" );
+		button.addActionListener( new GenerateLetterActionListener() );
+		toolbar.add( button );
 
-        // add a menubar
-        setJMenuBar( new LetterGeneratorMenuBar( inputComponent ) );
+		add( inputComponent );
 
-        // add a horizontal toolbar
-        JToolBar toolbar = new JToolBar();
-        add( toolbar, BorderLayout.NORTH );
+		// add a statusbar
+		statusLabel = new JLabel( " " );
+		statusLabel.setBorder( new EmptyBorder( 4, 4, 4, 4 ) );
+		statusLabel.setHorizontalAlignment( JLabel.LEADING );
+		add( statusLabel, BorderLayout.SOUTH );
 
-        JButton button = new JButton();
-        button.setIcon( new ImageIcon( getClass().getResource( "run.gif" ) ) );
-        button.setToolTipText( "Generierung starten" );
-        button.addActionListener( new GenerateLetterActionListener() );
-        toolbar.add( button );
+		pack();
 
-        add( inputComponent );
+		// Model setzen
+		inputComponent.setLetter( LetterGeneratorModel.loadDefaultLetter() );
+		inputComponent.setOutputDirectory( LetterGeneratorModel.loadDefaultOutputDirectory() );
+	}
 
-        // add a statusbar
-        statusLabel = new JLabel( " " );
-        statusLabel.setBorder( new EmptyBorder( 4, 4, 4, 4 ) );
-        statusLabel.setHorizontalAlignment( JLabel.LEADING );
-        add( statusLabel, BorderLayout.SOUTH );
+	public void setStatusMessage( String message )
+	{
+		if ( statusLabel != null )
+		{
+			statusLabel.setText( message );
+		}
+	}
 
-        pack();
+	public void resetStatusMessage()
+	{
+		setStatusMessage( " " );
+	}
 
-        // Model setzen
-        inputComponent.setLetter( LetterGeneratorModel.loadDefaultLetter() );
-        inputComponent.setOutputDirectory( LetterGeneratorModel.loadDefaultOutputDirectory() );
-    }
+	/**
+	 * Make toplevel "busy"
+	 *
+	 * @param  busy  DOCUMENT ME!
+	 */
+	public void setFrameBusy( boolean busy )
+	{
+		getGlassPane().setVisible( busy );
 
-    public void setStatusMessage( String message ) {
+		// Must explicitly disable the menubar because on OSX ist will be
+		// in the system menubar and not covered by the glasspane
+		getJMenuBar().setEnabled( !busy );
+	}
 
-        if( statusLabel != null ) {
-            statusLabel.setText( message );
-        }
-    }
+	protected class GenerateLetterActionListener implements ActionListener
+	{
+		@Override
+		public void actionPerformed( ActionEvent e )
+		{
+			setFrameBusy( true );
+			resetStatusMessage();
 
-    public void resetStatusMessage() {
-        setStatusMessage( " " );
-    }
+			Thread th = new Thread()
+			{
+				@Override
+				public void run()
+				{
+//					try {
+//						Thread.sleep( 1000 );
+//					}
+//					catch ( Exception ex )
+//					{
+//						// Nothing to do
+//					}
 
-    /**
-     * Make toplevel "busy"
-     *
-     * @param  busy  DOCUMENT ME!
-     */
-    public void setFrameBusy( boolean busy ) {
+					Letter letter = inputComponent.readLetter();
+					String outputDirectory = inputComponent.readOutputDirectory();
 
-        getGlassPane().setVisible( busy );
+					// TODO Validierung
 
-        // Must explicitly disable the menubar because on OSX ist will be
-        // in the system menubar and not covered by the glasspane
-        getJMenuBar().setEnabled( !busy );
-    }
+					try
+					{
+						LetterGeneratorModel.generateLetter( letter, outputDirectory );
 
-    protected class GenerateLetterActionListener implements ActionListener {
+						setStatusMessage( "Das Anschreiben wurde erfolgreich generiert." );
+					}
+					catch ( JRException ex )
+					{
+						setStatusMessage( "Bei der Erstellung des Anschreibens ist ein Fehler aufgetreten." );
 
-        @Override
-        public void actionPerformed( ActionEvent e ) {
+						ex.printStackTrace();
+					}
 
-            setFrameBusy( true );
-            resetStatusMessage();
+					setFrameBusy( false );
+				}
+			};
 
-            Thread th = new Thread() {
-                    @Override
-                    public void run() {
-
-//                        try {
-//                            Thread.sleep( 1000 );
-//                        } catch( Exception ex ) {
-//                            // Nothing to do
-//                        }
-
-                        Letter letter = inputComponent.readLetter();
-                        String outputDirectory = inputComponent.readOutputDirectory();
-
-                        // TODO Validierung
-
-                        try {
-                            LetterGeneratorModel.generateLetter( letter, outputDirectory );
-
-                            setStatusMessage( "Das Anschreiben wurde erfolgreich generiert." );
-
-                        } catch( JRException ex ) {
-                            setStatusMessage( "Bei der Erstellung des Anschreibens ist ein Fehler aufgetreten." );
-
-                            ex.printStackTrace();
-                        }
-
-                        setFrameBusy( false );
-                    }
-                };
-
-            th.start();
-        }
-    }
+			th.start();
+		}
+	}
 }
